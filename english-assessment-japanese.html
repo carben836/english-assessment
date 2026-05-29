@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Language Assessment · Japanese Native Speakers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: rgba(0,0,0,0.1);
+    --text: #1A1A18;
+    --muted: #6B6B65;
+    --hint: #9E9E97;
+    --accent: #3D3599;
+    --accent-light: #EEEDFE;
+    --accent-mid: #7F77DD;
+    --correct: #0F6E56;
+    --correct-bg: #E1F5EE;
+    --wrong: #993C1D;
+    --wrong-bg: #FAECE7;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  html { background: var(--bg); min-height: 100%; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .page-header {
+    background: var(--accent);
+    padding: 3rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .page-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 10%;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 16px;
+  }
+
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  .header-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 300;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meta-item svg { opacity: 0.7; }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .progress-wrap {
+    margin: -1.5rem 0 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .progress-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .progress-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .section-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 14px;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    margin-bottom: 1rem;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--hint);
+    margin-bottom: 8px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+
+  .q-context {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--muted);
+    background: var(--bg);
+    border-left: 3px solid var(--accent-mid);
+    padding: 10px 14px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 8px; }
+
+  .opt-btn {
+    text-align: left;
+    background: var(--bg);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1.45;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .opt-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.07);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    background: var(--accent-light);
+    border-color: var(--accent-mid);
+  }
+
+  .opt-btn:hover:not(:disabled) .opt-letter {
+    background: var(--accent-mid);
+    color: #fff;
+  }
+
+  .opt-btn.selected {
+    background: var(--accent-light);
+    border-color: var(--accent-mid);
+  }
+
+  .opt-btn.selected .opt-letter {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .opt-btn.correct {
+    background: var(--correct-bg);
+    border-color: var(--correct);
+  }
+
+  .opt-btn.correct .opt-letter {
+    background: var(--correct);
+    color: #fff;
+  }
+
+  .opt-btn.wrong {
+    background: var(--wrong-bg);
+    border-color: var(--wrong);
+  }
+
+  .opt-btn.wrong .opt-letter {
+    background: var(--wrong);
+    color: #fff;
+  }
+
+  .opt-btn:disabled { cursor: default; }
+
+  .explanation {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    display: none;
+    border-left: 3px solid var(--correct);
+  }
+
+  .explanation.show { display: block; }
+
+  .explanation strong { color: var(--text); font-weight: 500; }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn:hover:not(:disabled) { background: var(--bg); }
+
+  .btn:disabled { opacity: 0.35; cursor: default; }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover:not(:disabled) { background: #2d2677; border-color: #2d2677; }
+
+  .q-count-label {
+    font-size: 13px;
+    color: var(--hint);
+  }
+
+  /* Results */
+  .result-wrap { animation: slideUp 0.4s ease; }
+
+  .score-hero {
+    background: var(--accent);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .score-fraction {
+    font-family: 'DM Serif Display', serif;
+    font-size: 64px;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .score-fraction span {
+    font-size: 32px;
+    opacity: 0.6;
+  }
+
+  .score-pct {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 16px;
+  }
+
+  .level-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 18px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .feedback-hero {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .breakdown-card {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .breakdown-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .breakdown-lbl {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .retry-row {
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    .page-header { padding: 2rem 1.25rem 3rem; }
+    .meta-row { gap: 16px; }
+    .question-card { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-tag">Language Assessment</div>
+  <h1 class="header-title">English Proficiency Test</h1>
+  <p class="header-sub">Designed for Japanese native speakers</p>
+  <div class="meta-row">
+    <span class="meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      ~10 minutes
+    </span>
+    <span class="meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      20 questions
+    </span>
+    <span class="meta-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      CEFR level result
+    </span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="test-view">
+    <div class="progress-wrap">
+      <div class="progress-card">
+        <div class="progress-track">
+          <div class="progress-fill" id="prog" style="width:0%"></div>
+        </div>
+        <span class="progress-text" id="prog-text">0 of 20</span>
+      </div>
+    </div>
+
+    <div id="section-pill-wrap"></div>
+    <div id="q-area"></div>
+
+    <div class="nav">
+      <button class="btn" id="prev-btn" onclick="prev()">← Back</button>
+      <span class="q-count-label" id="q-label"></span>
+      <button class="btn btn-primary" id="next-btn" onclick="next()">Next →</button>
+    </div>
+  </div>
+
+  <div id="result-view" style="display:none"></div>
+</div>
+
+<script>
+const Q = [
+  { s:"Vocabulary", q:"Choose the correct word to complete the sentence:", ctx:"She has been working at the company for five years and has gained a lot of ______.", opts:["experiment","experience","expedition","examination"], a:1, exp:"<strong>Experience</strong> (経験) means knowledge or skill gained through doing something. Japanese learners often confuse it with <em>experiment</em> (実験), which means a scientific test." },
+  { s:"Vocabulary", q:"Which word is closest in meaning to 'polite'?", ctx:null, opts:["rude","courteous","casual","blunt"], a:1, exp:"<strong>Courteous</strong> means showing good manners and respect — the same as polite (礼儀正しい). Rude and blunt are opposites." },
+  { s:"Vocabulary", q:"Choose the correct word:", ctx:"I need to ______ a taxi to get to the airport on time.", opts:["ride","catch","sit","arrive"], a:1, exp:"<strong>Catch</strong> a taxi is the natural collocation in English (タクシーをつかまえる). Ride is used for bicycles, motorcycles, or horses — not taxis." },
+  { s:"Vocabulary", q:"What does 'lend' mean?", ctx:null, opts:["to take something from someone","to give something temporarily","to buy something for someone","to keep something permanently"], a:1, exp:"<strong>Lend</strong> (貸す) means to give temporarily. Japanese learners sometimes confuse it with <em>borrow</em> (借りる), which means to receive temporarily." },
+  { s:"Grammar", q:"Choose the correct sentence:", ctx:null, opts:["She doesn't knows the answer.","She don't know the answer.","She doesn't know the answer.","She not knows the answer."], a:2, exp:"In third-person singular (he/she/it), use <strong>doesn't</strong> + base verb: 'She doesn't know.' The verb never gets an -s when using does/doesn't." },
+  { s:"Grammar", q:"Select the correct form:", ctx:"By the time she arrived, the movie already ______.", opts:["started","has started","had started","was starting"], a:2, exp:"<strong>Had started</strong> is the past perfect tense, used for an action that completed before another past event. Japanese has no perfect aspect, so this tense is challenging for native Japanese speakers." },
+  { s:"Grammar", q:"Which sentence uses articles correctly?", ctx:null, opts:["I saw a elephant at zoo.","I saw an elephant at the zoo.","I saw the elephant at a zoo.","I saw elephant at the zoo."], a:1, exp:"Use <strong>an</strong> before words starting with a vowel sound (elephant). Use <strong>the</strong> for specific, known places (the zoo). Japanese has no articles (a/an/the), making this a common difficulty." },
+  { s:"Grammar", q:"Choose the correct question form:", ctx:null, opts:["Since when you live here?","How long have you lived here?","How long you are living here?","From when you live here?"], a:1, exp:"<strong>How long have you lived here?</strong> uses the present perfect to ask about duration up to now. 'Since when' is not natural in English — it is closer to a direct translation from Japanese (いつから)." },
+  { s:"Grammar", q:"Which sentence is correct?", ctx:null, opts:["He suggested me to go early.","He suggested that I go early.","He suggested me going early.","He suggested I to go early."], a:1, exp:"<strong>Suggest</strong> is not followed by an object + infinitive. Use 'suggest + that + subject + verb': He suggested that I go early. This differs from verbs like 'advise' or 'tell.'" },
+  { s:"Reading", q:"Read the passage and answer:", ctx:"Tokyo is one of the world's most densely populated cities, yet it is remarkably clean and orderly. Public transport runs with extraordinary punctuality, and crime rates remain very low compared to other global cities.", opts:["Tokyo is a dangerous city.","Tokyo has an efficient and safe urban environment.","Tokyo's trains are often late.","Tokyo is less populated than other cities."], a:1, exp:"The passage states Tokyo is clean, orderly, punctual, and has low crime — all pointing to: <strong>an efficient and safe urban environment</strong>." },
+  { s:"Reading", q:"What is the main purpose of this text?", ctx:"Please ensure all employees complete the online safety training module by 31 March. Failure to do so may result in restricted access to company systems.", opts:["To invite employees to a training session","To warn employees about a deadline and consequence","To praise employees for good safety practices","To explain how the safety system works"], a:1, exp:"The text sets a <strong>deadline</strong> (31 March) and states a <strong>consequence</strong> (restricted access) — its purpose is to warn. This is a workplace notice, common in formal English communication." },
+  { s:"Reading", q:"What does the underlined word most likely mean?", ctx:"Despite the heavy rain, the outdoor festival was an <u>unequivocal</u> success, with thousands of attendees staying all day.", opts:["partial","unexpected","clear and definite","moderate"], a:2, exp:"<strong>Unequivocal</strong> means leaving no doubt — clear and definite. Context clues: despite bad weather, thousands stayed all day, so the success was unquestionable." },
+  { s:"Conversation", q:"Choose the most natural response:", ctx:"Friend: 'I'm sorry I forgot to call you back yesterday.' You: ______", opts:["It is fine. I forgive you.","No worries, don't worry about it!","Yes, you should be sorry.","I agree, you forgot."], a:1, exp:"<strong>'No worries, don't worry about it!'</strong> is a natural, friendly response to an apology. Option A sounds formal and stiff; options C and D are impolite. Casual spoken English often uses 'No worries' or 'It's fine.'" },
+  { s:"Conversation", q:"What is the speaker implying?", ctx:"Manager to employee: 'It would be nice if the report could be ready by Thursday.'", opts:["The manager is making a polite suggestion.","The manager is requesting the report by Thursday.","The manager does not need the report urgently.","The manager is asking whether Thursday is possible."], a:1, exp:"In English workplace culture, <strong>indirect requests</strong> using 'It would be nice if…' are still genuine requests. Japanese speakers may take this too literally as optional — it is not." },
+  { s:"Conversation", q:"Choose the correct response to this question:", ctx:"Colleague: 'Have you had lunch yet?'", opts:["Yes, I have had.","Yes, I have.","Yes, I had.","Yes, I have been."], a:1, exp:"<strong>'Yes, I have.'</strong> is the correct short answer to a present perfect question. Never repeat the full verb: 'Yes, I have had' is redundant and unnatural." },
+  { s:"Writing", q:"Which sentence is written most clearly and correctly?", ctx:null, opts:["Yesterday I very enjoyed the dinner with my colleague.","I enjoyed the dinner with my colleague very much yesterday.","I enjoyed very much the dinner yesterday with my colleague.","Yesterday with my colleague the dinner I very much enjoyed."], a:1, exp:"English follows Subject–Verb–Object order. <strong>Adverbs of degree</strong> like 'very much' come after the object, not before the verb. Correct order: subject + verb + object + adverb + time." },
+  { s:"Writing", q:"Choose the best way to connect these two ideas:", ctx:"She studied hard. / She did not pass the exam.", opts:["She studied hard, but she did not pass the exam.","She studied hard, so she did not pass the exam.","She studied hard because she did not pass the exam.","She studied hard, and she did not pass the exam."], a:0, exp:"<strong>But</strong> (しかし) shows contrast between two opposing ideas. 'So' implies result; 'because' implies reason. The contrast here is between effort (studied hard) and unexpected outcome (didn't pass)." },
+  { s:"Writing", q:"Which sentence uses punctuation correctly?", ctx:null, opts:["We need to buy; milk, eggs, and bread.","We need to buy milk, eggs and bread.","We need to buy: milk eggs and bread.","We need to buy milk eggs, and bread."], a:1, exp:"<strong>'milk, eggs and bread'</strong> is correct. Commas separate list items. Never use a semicolon between a main clause and a list — that role belongs to a colon." },
+  { s:"Error Detection", q:"Find the error in the sentence:", ctx:"She is very interested on learning Japanese cooking.", opts:["is very → is much","interested on → interested in","learning → to learn","Japanese cooking → Japanese cook"], a:1, exp:"The correct preposition is <strong>interested in</strong>, not 'interested on.' Japanese has no prepositions (前置詞) in the same way, so choosing the right English preposition is a common challenge." },
+  { s:"Error Detection", q:"Which word is used incorrectly?", ctx:"He made a great damage to the car when he crashed.", opts:["made should be caused","great should be very","crashed should be crash","No error — the sentence is correct"], a:0, exp:"With <strong>damage</strong>, English uses <em>caused</em>, not <em>made</em>: 'He caused great damage.' The verb make does not collocate with damage. These verb–noun collocations are a frequent error area." }
+];
+
+const LETTERS = ['A','B','C','D'];
+let cur = 0, ans = new Array(Q.length).fill(null), done = new Array(Q.length).fill(false);
+
+function render() {
+  const q = Q[cur];
+  const pct = Math.round((cur / Q.length) * 100);
+  document.getElementById('prog').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = cur + ' of ' + Q.length;
+  document.getElementById('q-label').textContent = 'Question ' + (cur+1) + ' of ' + Q.length;
+
+  document.getElementById('section-pill-wrap').innerHTML =
+    '<div class="section-pill">' + q.s + '</div>';
+
+  let html = '<div class="question-card">';
+  html += '<div class="q-number">Question ' + (cur+1) + '</div>';
+  html += '<div class="q-text">' + q.q + '</div>';
+  if (q.ctx) html += '<div class="q-context">' + q.ctx + '</div>';
+  html += '<div class="options">';
+  q.opts.forEach((opt, i) => {
+    let cls = 'opt-btn';
+    if (done[cur]) {
+      if (i === q.a) cls += ' correct';
+      else if (i === ans[cur] && ans[cur] !== q.a) cls += ' wrong';
+    } else if (ans[cur] === i) cls += ' selected';
+    html += '<button class="' + cls + '" onclick="pick(' + i + ')" ' + (done[cur]?'disabled':'') + '>';
+    html += '<span class="opt-letter">' + LETTERS[i] + '</span>' + opt + '</button>';
+  });
+  html += '</div>';
+  html += '<div class="explanation' + (done[cur]?' show':'') + '">' + q.exp + '</div>';
+  html += '</div>';
+
+  document.getElementById('q-area').innerHTML = html;
+
+  document.getElementById('prev-btn').disabled = cur === 0;
+  const nb = document.getElementById('next-btn');
+  if (cur === Q.length - 1) {
+    nb.textContent = 'See results →';
+    nb.disabled = !done[cur];
+  } else {
+    nb.textContent = 'Next →';
+    nb.disabled = ans[cur] === null;
+  }
+}
+
+function pick(i) {
+  if (done[cur]) return;
+  ans[cur] = i;
+  done[cur] = true;
+  render();
+}
+
+function next() {
+  if (cur === Q.length - 1) { showResults(); return; }
+  cur++; render();
+}
+
+function prev() { if (cur > 0) { cur--; render(); } }
+
+function showResults() {
+  const correct = ans.filter((a,i) => a === Q[i].a).length;
+  const total = Q.length;
+  const pct = Math.round(correct / total * 100);
+
+  const sections = [...new Set(Q.map(q => q.s))];
+  let sData = {};
+  sections.forEach(s => {
+    const idxs = Q.map((q,i)=>q.s===s?i:-1).filter(i=>i>=0);
+    sData[s] = { c: idxs.filter(i=>ans[i]===Q[i].a).length, t: idxs.length };
+  });
+
+  let level, fb;
+  if (pct >= 90) { level = 'Advanced · C1–C2'; fb = 'Excellent command of English grammar, vocabulary, and usage. Focus on nuance, idiomatic expression, and academic writing to reach native-like fluency.'; }
+  else if (pct >= 75) { level = 'Upper-Intermediate · B2'; fb = 'Good performance. You handle most everyday English well. Review prepositions, verb collocations, and indirect speech patterns — common sticking points at this stage.'; }
+  else if (pct >= 55) { level = 'Intermediate · B1'; fb = 'Solid foundation. Focus on English articles (a/an/the), tense usage (especially perfect tenses), and natural word order — areas where Japanese differs significantly from English.'; }
+  else if (pct >= 35) { level = 'Elementary · A2'; fb = 'Keep building! Prioritise basic grammar structures, common vocabulary, and question forms. Daily exposure through reading and listening will accelerate your progress.'; }
+  else { level = 'Beginner · A1'; fb = 'Every expert was once a beginner. Start with essential vocabulary, basic sentence structure, and simple conversation. Consistent daily practice is the key.'; }
+
+  let html = '<div class="result-wrap">';
+  html += '<div class="score-hero">';
+  html += '<div class="score-fraction">' + correct + '<span>/' + total + '</span></div>';
+  html += '<div class="score-pct">' + pct + '% correct</div>';
+  html += '<div class="level-badge">' + level + '</div>';
+  html += '<p class="feedback-hero">' + fb + '</p>';
+  html += '</div>';
+  html += '<div class="breakdown-grid">';
+  sections.forEach(s => {
+    const d = sData[s];
+    html += '<div class="breakdown-card"><div class="breakdown-num">' + d.c + '/' + d.t + '</div><div class="breakdown-lbl">' + s + '</div></div>';
+  });
+  html += '</div>';
+  html += '<div class="retry-row"><button class="btn btn-primary" onclick="restart()">Try again</button></div>';
+  html += '</div>';
+
+  document.getElementById('test-view').style.display = 'none';
+  document.getElementById('result-view').style.display = 'block';
+  document.getElementById('result-view').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+  cur = 0;
+  ans = new Array(Q.length).fill(null);
+  done = new Array(Q.length).fill(false);
+  document.getElementById('result-view').style.display = 'none';
+  document.getElementById('test-view').style.display = 'block';
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+render();
+</script>
+</body>
+</html>
